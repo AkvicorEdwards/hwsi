@@ -1,0 +1,10 @@
+version: "3"
+services:
+  hwsi:
+    image: hwsi
+    container_name: hwsi
+    restart: always
+    volumes:
+      - ./work:/go/src/github.com/AkvicorEdwards/hwsi/work
+    ports:
+      - 8080:80
