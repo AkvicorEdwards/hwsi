@@ -1,0 +1,10 @@
+version: 1.0
+
+server:
+  title: Akvicor's file System
+  addr: :9090
+  # password: pass # in future
+
+path:
+  theme: ./theme/ori/
+  work: ./work/
