@@ -2,7 +2,7 @@ version: 1.0
 
 server:
   title: Akvicor's file System
-  addr: :8021
+  addr: :80
   password: pass
 
 path:
