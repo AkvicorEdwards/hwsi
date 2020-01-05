@@ -9,7 +9,7 @@ import (
 
 var Data Config
 
-var path = "./config/config.yaml"
+var path = "./config/config/config.yaml"
 
 type Config struct {
 	Server cServer `yaml:"server"`
