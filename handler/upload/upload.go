@@ -13,6 +13,7 @@ import (
 	"time"
 )
 
+// Upload file
 func Upload(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		if t, err := template.ParseFiles(config.Data.Path.Theme+"upload.html"); err != nil {

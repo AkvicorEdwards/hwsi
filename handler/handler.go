@@ -10,6 +10,7 @@ import (
 
 var mux map[string]func(http.ResponseWriter, *http.Request)
 
+// All Prefix
 func Init() {
 	mux = make(map[string]func(http.ResponseWriter, *http.Request))
 	mux["/"] = myindex.HomePage
@@ -17,6 +18,7 @@ func Init() {
 	mux["/index"] = myindex.FileIndex
 }
 
+// Prefix Handler
 type MyHandler struct{}
 
 func (*MyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
