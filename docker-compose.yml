@@ -5,8 +5,8 @@ services:
     container_name: hwsi
     restart: always
     volumes:
-      - ./work: /go/src/github.com/AkvicorEdwards/hwsi/work
-      - ./config: /go/src/github.com/AkvicorEdwards/hwsi/config/config
-      - ./theme: /go/src/github.com/AkvicorEdwards/hwsi/theme
+      - ./work:/go/src/github.com/AkvicorEdwards/hwsi/work
+      - ./config:/go/src/github.com/AkvicorEdwards/hwsi/config/config
+      - ./theme:/go/src/github.com/AkvicorEdwards/hwsi/theme
     ports:
       - 8080:80
