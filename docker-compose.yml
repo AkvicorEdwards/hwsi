@@ -1,7 +1,7 @@
 version: "3"
 services:
   hwsi:
-    image: hwsi
+    image: registry.cn-qingdao.aliyuncs.com/akvicors_images/hwsi:1.0
     container_name: hwsi
     restart: always
     volumes:

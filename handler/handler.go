@@ -10,6 +10,13 @@ import (
 
 var mux map[string]func(http.ResponseWriter, *http.Request)
 
+func Init() {
+	mux = make(map[string]func(http.ResponseWriter, *http.Request))
+	mux["/"] = myindex.HomePage
+	mux["/upload"] = upload.Upload
+	mux["/index"] = myindex.FileIndex
+}
+
 type MyHandler struct{}
 
 func (*MyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -28,9 +35,3 @@ func (*MyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Init() {
-	mux = make(map[string]func(http.ResponseWriter, *http.Request))
-	mux["/"] = myindex.HomePage
-	mux["/upload"] = upload.Upload
-	mux["/index"] = myindex.FileIndex
-}

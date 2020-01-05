@@ -3,7 +3,7 @@ version: 1.0
 server:
   title: Akvicor's file System
   addr: :80
-  # password: pass # in future
+  password: pass # in future
 
 path:
   theme: ./theme/ori/
