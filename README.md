@@ -21,7 +21,6 @@ go build hwsi.go
 ```bash
 git clone https://github.com/AkvicorEdwards/hwsi.git
 cd hwsi
-mkdir work config theme
 docker-compose up -d
 
 # ListenAndServe: localhost:8080
