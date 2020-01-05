@@ -27,6 +27,10 @@ func Upload(w http.ResponseWriter, r *http.Request) {
 			log.Error(err)
 			return
 		}
+		if r.FormValue("password") != config.Data.Server.Password {
+			_, _ = fmt.Fprintf(w, "%v", "Wrong password")
+			return
+		}
 		file, handler, err := r.FormFile("filename")
 		if err != nil {
 			_, _ = fmt.Fprintf(w, "%v", "Upload error")
