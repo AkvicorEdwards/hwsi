@@ -2,9 +2,10 @@ version: 1.0
 
 server:
   title: Akvicor's file System
-  addr: :80
+  addr: :8021
   password: pass
 
 path:
   theme: ./theme/ori/
   work: ./work/
+  upload: ./upload/

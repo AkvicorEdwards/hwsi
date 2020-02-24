@@ -10,9 +10,6 @@ import (
 // Global configuration variables
 var Data Config
 
-// Configuration file directory
-var path = "./config/config.yaml"
-
 // Configuration structure
 type Config struct {
 	Server cServer `yaml:"server"`
@@ -23,6 +20,7 @@ type Config struct {
 type cPath struct {
 	Theme string `yaml:"theme"`
 	Work string `yaml:"work"`
+	Upload string `yaml:"upload"`
 }
 
 // Server for Config
@@ -33,11 +31,31 @@ type cServer struct {
 }
 
 // Get configuration information from a configuration file
-func (c *Config) Get() error {
+func (c *Config) GetByFile(path string) error {
 	if f, err := os.Open(path); err != nil {
 		return err
 	} else if err = yaml.NewDecoder(f).Decode(c); err != nil {
 		return err
+	}
+	return nil
+}
+
+func (c *Config) GetByMap(args map[string]string) error {
+	for k, v := range args {
+		switch k {
+		case "title":
+			c.Server.Title = v
+		case "port":
+			c.Server.Addr = ":" + v
+		case "password":
+			c.Server.Password = v
+		case "work":
+			c.Path.Work = v
+		case "upload":
+			c.Path.Upload = v
+		case "theme":
+			c.Path.Theme = v
+		}
 	}
 	return nil
 }
@@ -50,11 +68,3 @@ func (c *Config) String() string {
 	return string(byt)
 }
 
-// Returns a new Config with configuration information
-func New() (*Config, error) {
-	conf := &Config{}
-	if err := conf.Get(); err != nil {
-		return nil, err
-	}
-	return conf, nil
-}

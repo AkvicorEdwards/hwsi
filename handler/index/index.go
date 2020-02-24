@@ -5,13 +5,26 @@ import (
 	log "github.com/sirupsen/logrus"
 	"html/template"
 	"hwsi/config"
+	"hwsi/theme/ori"
 	"net/http"
 )
 
 // Homepage
 func HomePage(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles(config.Data.Path.Theme + "index.html")
-	if err := t.Execute(w, map[string]interface{}{"Title":config.Data.Server.Title}); err != nil {
+	var t *template.Template
+	var err error
+	if config.Data.Path.Theme == "ori" {
+		t, err = template.New("ori").Parse(ori.Index)
+	}else {
+		t, err = template.ParseFiles(config.Data.Path.Theme + "index.html")
+	}
+
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	if err = t.Execute(w, map[string]interface{}{"title":config.Data.Server.Title}); err != nil {
 		log.Error(err)
 		_, _ = fmt.Fprintf(w, "%v", "Error")
 	}

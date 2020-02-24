@@ -5,6 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"html/template"
 	"hwsi/config"
+	"hwsi/theme/ori"
 	"io"
 	"net/http"
 	"os"
@@ -16,14 +17,26 @@ import (
 // Upload file
 func Upload(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		if t, err := template.ParseFiles(config.Data.Path.Theme+"upload.html"); err != nil {
+		var t *template.Template
+		var err error
+
+		if config.Data.Path.Theme == "ori" {
+			t, err = template.New("ori").Parse(ori.Upload)
+		}else {
+			t, err = template.ParseFiles(config.Data.Path.Theme+"upload.html")
+		}
+
+		if err != nil {
 			log.Error(err)
 			return
-		} else if err := t.Execute(w, map[string]interface{}{"Title":config.Data.Server.Title}); err != nil {
+		}
+
+		if err := t.Execute(w, map[string]interface{}{"title":config.Data.Server.Title}); err != nil {
 			log.Error(err)
 			return
 		}
 	} else {
+
 		if err := r.ParseMultipartForm(32 << 20); err != nil {
 			log.Error(err)
 			return
@@ -44,12 +57,12 @@ func Upload(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		filename := strconv.FormatInt(time.Now().Unix(), 10) + "_" + handler.Filename
-		f, _ := os.OpenFile(config.Data.Path.Work + filename, os.O_CREATE | os.O_WRONLY, 0660)
+		f, _ := os.OpenFile(config.Data.Path.Upload + filename, os.O_CREATE | os.O_WRONLY, 0660)
 		if _, err = io.Copy(f, file); err != nil {
 			_, _ = fmt.Fprintf(w, "%v", "Upload failed")
 			return
 		}
-		fileDir, _ := filepath.Abs(config.Data.Path.Work + filename)
+		fileDir, _ := filepath.Abs(config.Data.Path.Upload + filename)
 		_, _ = fmt.Fprintf(w, "%v", filename+" Upload successful: "+fileDir)
 
 	}
