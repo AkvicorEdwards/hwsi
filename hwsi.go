@@ -24,7 +24,7 @@ Usage:
 	password password       password
 	work dir                work directory
 	upload dir              upload directory
-	version print           Hwsi version
+	version            		print Hwsi version
 `
 
 const WrongArgs string = `
@@ -62,7 +62,9 @@ func parseArgs() {
 	args["title"] = "Hwsi"
 	args["password"] = ""
 	args["work"], _ = os.Getwd()
+	args["work"] += "/"
 	args["upload"], _ = os.Getwd()
+	args["upload"] += "/"
 	args["theme"] = "ori"
 
 	lastArg, arg := "", ""
