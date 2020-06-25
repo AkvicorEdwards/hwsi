@@ -1,6 +1,6 @@
-package theme
+package tpl
 
-const Upload string = `<!DOCTYPE html>
+const upload string = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">

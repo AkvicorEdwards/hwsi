@@ -1,6 +1,6 @@
-package theme
+package tpl
 
-const Index string = `<!DOCTYPE html>
+const index string = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">

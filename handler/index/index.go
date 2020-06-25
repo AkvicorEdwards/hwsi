@@ -2,24 +2,15 @@ package index
 
 import (
 	"fmt"
-	"html/template"
 	"hwsi/config"
-	"hwsi/theme"
+	"hwsi/tpl"
 	"log"
 	"net/http"
 )
 
 // Homepage
 func HomePage(w http.ResponseWriter, r *http.Request) {
-	var t *template.Template
-	var err error
-	t, err = template.New("ori").Parse(theme.Index)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	if err = t.Execute(w, map[string]interface{}{"title":config.Title}); err != nil {
+	if err := tpl.Index.Execute(w, map[string]interface{}{"title":config.Title}); err != nil {
 		log.Println(err)
 		_, _ = fmt.Fprintf(w, "%v", "Error")
 	}

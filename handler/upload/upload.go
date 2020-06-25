@@ -2,9 +2,8 @@ package upload
 
 import (
 	"fmt"
-	"html/template"
 	"hwsi/config"
-	"hwsi/theme"
+	"hwsi/tpl"
 	"io"
 	"log"
 	"net/http"
@@ -15,17 +14,7 @@ import (
 // Upload file
 func Upload(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		var t *template.Template
-		var err error
-
-		t, err = template.New("ori").Parse(theme.Upload)
-
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		if err := t.Execute(w, map[string]interface{}{"title":config.Title}); err != nil {
+		if err := tpl.Upload.Execute(w, map[string]interface{}{"title":config.Title}); err != nil {
 			log.Println(err)
 			return
 		}
