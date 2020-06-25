@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/AkvicorEdwards/argsparser"
 	"hwsi/config"
 	"hwsi/handler"
 	"net"
@@ -10,105 +11,77 @@ import (
 	"time"
 )
 
-const Version string = "1.0.0"
-
-const Help string = `
-Hwsi is a file indexer for HTTP web servers with focus on your files.
-
-Usage:
-
-	config config_file      use config file
-	port port               port
-	title title             Title
-	password password       password
-	work dir                work directory
-	upload dir              upload directory
-	version            		print Hwsi version
-`
-
-const WrongArgs string = `
-Unknown command
-Run 'hwsi help' for usage.
-`
-
 func main() {
-
+	setDir()
 	parseArgs()
 
 	handler.Init()
 	server := http.Server{
-		Addr:              config.Data.Server.Addr,
+		Addr:              config.Addr,
 		Handler:           &handler.MyHandler{},
 		ReadTimeout:       20 * time.Minute,
 	}
-	fmt.Printf("WORK   DIR: [%s]\n", config.Data.Path.Work)
-	fmt.Printf("UPLOAD DIR: [%s]\n", config.Data.Path.Upload)
-	fmt.Printf("PASSWORD:   [%s]\n", config.Data.Server.Password)
+	fmt.Printf("WORK   DIR: [%s]\n", config.WorkDir)
+	fmt.Printf("UPLOAD DIR: [%s]\n", config.UploadDir)
+	fmt.Printf("PASSWORD:   [%s]\n", config.Password)
 	ips := GetIntranetIp()
 	for k, v := range ips {
-		fmt.Printf("[%d] http://%s%s\n", k, v, config.Data.Server.Addr)
+		fmt.Printf("[%d] http://%s%s\n", k, v, config.Addr)
 	}
 	if err := server.ListenAndServe(); err != nil {
 		panic(err)
 	}
 }
 
+func setDir() {
+	config.WorkDir, _ = os.Getwd()
+	config.WorkDir += "/"
+	config.UploadDir, _ = os.Getwd()
+	config.UploadDir += "/"
+}
+
 func parseArgs() {
-	args := make(map[string]string)
-	args["config"] = ""
-	args["port"] = "8021"
-	args["title"] = "Hwsi"
-	args["password"] = ""
-	args["work"], _ = os.Getwd()
-	args["work"] += "/"
-	args["upload"], _ = os.Getwd()
-	args["upload"] += "/"
-	args["theme"] = "ori"
+	argsparser.Version = "2.0"
+	argsparser.Help = `
+Usage: hwsi [option...] [arguments...]
 
-	lastArg, arg := "", ""
-	idx := 0
+Example: 
 
-	for idx, arg = range os.Args {
-		if idx == 0 {
-			continue
-		}
-		if arg == "help" {
-			fmt.Print(Help)
-			os.Exit(0)
-		}
-		if arg == "version" {
-			fmt.Println(Version)
-			os.Exit(0)
-		}
-		if (idx&1) == 1 {
-			lastArg = arg
-		} else {
-			if _, ok := args[lastArg]; ok {
-				args[lastArg] = arg
-			} else {
-				fmt.Print(WrongArgs)
-				os.Exit(0)
-			}
-		}
-	}
+	hwsi port 7020
 
-	if (idx&1) == 1 {
-		fmt.Print(WrongArgs)
-		os.Exit(0)
-	}
+The commands are:
 
-	if len(args["config"]) == 0 {
-		if err := config.Data.GetByMap(args); err != nil {
-			fmt.Println("read by map error")
-			os.Exit(0)
-		}
-	}else {
-		if err := config.Data.GetByFile(args["config"]); err != nil {
-			fmt.Println("read by file error")
-			os.Exit(0)
-		}
-	}
+	title  [title]      Set server title
+	port   [port]       Set http listening port
+	work   [path]       Set work dir
+	upload [path]       Set upload dir
+	password [password] Set upload password
 
+Default:
+
+	title   Akvicor's file System
+	port    8021
+	work    ./
+	upload  ./
+`
+	argsparser.AddBasicArg()
+	argsparser.Add("title", 1, func(str []string) {
+		config.Title = str[1]
+	})
+	argsparser.Add("port", 1, func(str []string) {
+		config.Addr = fmt.Sprintf(":%s", str[1])
+	})
+	argsparser.Add("work", 1, func(str []string) {
+		config.Addr = str[1]
+	})
+	argsparser.Add("upload", 1, func(str []string) {
+		config.Addr = str[1]
+	})
+	argsparser.Add("password", 1, func(str []string) {
+		config.Password = str[1]
+	})
+
+	argsparser.Parse()
 }
 
 func GetIntranetIp() (ip []string) {
