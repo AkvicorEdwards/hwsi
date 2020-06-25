@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"hwsi/config"
 	"hwsi/handler"
+	"net"
 	"net/http"
 	"os"
 	"time"
-
-	log "github.com/sirupsen/logrus"
 )
 
 const Version string = "1.0.0"
@@ -34,22 +33,21 @@ Run 'hwsi help' for usage.
 
 func main() {
 
-	wd, _ := os.Getwd()
-	fmt.Println(os.Args[0], "\n", wd)
-
 	parseArgs()
 
-	//if err := config.Data.Get(); err != nil {
-	//	log.Error(err)
-	//}
 	handler.Init()
 	server := http.Server{
 		Addr:              config.Data.Server.Addr,
 		Handler:           &handler.MyHandler{},
-		ReadTimeout:       20 * time.Second,
+		ReadTimeout:       20 * time.Minute,
 	}
-	fmt.Println(config.Data.String())
-	log.Println("ListenAndServe:", config.Data.Server.Addr)
+	fmt.Printf("WORK   DIR: [%s]\n", config.Data.Path.Work)
+	fmt.Printf("UPLOAD DIR: [%s]\n", config.Data.Path.Upload)
+	fmt.Printf("PASSWORD:   [%s]\n", config.Data.Server.Password)
+	ips := GetIntranetIp()
+	for k, v := range ips {
+		fmt.Printf("[%d] http://%s%s\n", k, v, config.Data.Server.Addr)
+	}
 	if err := server.ListenAndServe(); err != nil {
 		panic(err)
 	}
@@ -111,4 +109,19 @@ func parseArgs() {
 		}
 	}
 
+}
+
+func GetIntranetIp() (ip []string) {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return
+	}
+	for _, address := range addrs {
+		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				ip = append(ip, ipnet.IP.String())
+			}
+		}
+	}
+	return
 }
